@@ -59,7 +59,7 @@ const SignUpPage = () => {
         </form>
         <p className="mt-4 text-center">
           Already have an account?{' '}
-          <NavLink to={'/sign-in'} className="text-blue-500">
+          <NavLink to={'/'} className="text-blue-500">
             Sign In
           </NavLink>
         </p>

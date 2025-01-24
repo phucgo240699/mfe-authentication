@@ -1,17 +1,23 @@
 import './index.css';
 import React from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import { SuspenseLayer } from '@/components/SuspenseLayer';
 
 const SignInPage = React.lazy(() => import('@/pages/signIn'));
 const SignUpPage = React.lazy(() => import('@/pages/signUp'));
 
-const App: React.FC = () => {
+export interface MfeAppProps {
+  tokenCallback?: (accessToken: string) => void;
+}
+
+const App: React.FC<MfeAppProps> = ({ tokenCallback }) => {
   return (
     <BrowserRouter basename="/auth">
       <Routes>
-        <Route path="/" element={<Navigate to={'/sign-in'} />} />
-        <Route path="/sign-in" element={<SignInPage />} />
+        <Route
+          path="/"
+          element={<SignInPage onSignInSuccess={tokenCallback} />}
+        />
         <Route
           path="/sign-up"
           element={

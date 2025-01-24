@@ -1,11 +1,24 @@
+import { signInRequest } from '@/apis/signIn';
 import { NavLink } from 'react-router';
 
-const SignInPage = () => {
+interface SignInFormProps {
+  onSignInSuccess?: (accessToken: string) => void;
+}
+
+const SignInPage: React.FC<SignInFormProps> = ({ onSignInSuccess }) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const { accessToken } = await signInRequest(email, password);
+    onSignInSuccess?.(accessToken);
+  };
   return (
     <div className="flex flex-col items-center p-14">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700">
               Email
