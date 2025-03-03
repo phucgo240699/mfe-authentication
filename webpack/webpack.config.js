@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const { merge } = require('webpack-merge');
 const commonConfig = require('./webpack.common');
 const webpack = require('webpack');
+const packageJson = require('../package.json');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 
 function getEnvVariables(envVarsPath) {
   if (fs.existsSync(envVarsPath)) {
@@ -18,7 +20,7 @@ function getEnvVariables(envVarsPath) {
 }
 
 module.exports = (envs) => {
-  const { env } = envs;
+  const { env, mfe } = envs;
 
   // Load environment variables
   const commonVarsPath = path.resolve(__dirname, '..', 'env/.env');
@@ -38,6 +40,22 @@ module.exports = (envs) => {
         ...commonVars,
         ...envVars,
       }),
+      ...(mfe === 'true'
+        ? [
+            new ModuleFederationPlugin({
+              name: 'mfe-authentication',
+              library: {
+                type: 'var',
+                name: 'mfeAuthentication',
+              },
+              filename: 'remoteEntry.js',
+              exposes: {
+                './AuthenticationApp': './src/bootstrap',
+              },
+              shared: packageJson.dependencies,
+            }),
+          ]
+        : []),
     ],
   };
 
